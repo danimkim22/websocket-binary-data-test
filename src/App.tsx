@@ -13,11 +13,6 @@ function App() {
     const dataUint8Arr = encoder.encode(stringifiedData);
     const pktNameLength = packetNameUint8Arr.length;
     const dataLength = dataUint8Arr.length;
-    const headerUint8Arr = new Uint8Array(headerSizeBytes);
-    headerUint8Arr[0] = pktNameLength;
-    headerUint8Arr[1] = pktNameLength >> 8;
-    headerUint8Arr[2] = dataLength;
-    headerUint8Arr[3] = dataLength >> 8;
 
     const arrayBufferLength = headerSizeBytes + pktNameLength + dataLength;
     const byteArray = new ArrayBuffer(arrayBufferLength);
@@ -35,7 +30,6 @@ function App() {
     for (let i = 0; i < dataLength; i++) {
       uintArray[headerSizeBytes + pktNameLength + i] = dataUint8Arr.at(i);
     }
-    console.log("uintArray", uintArray);
     return uintArray;
   }
 
