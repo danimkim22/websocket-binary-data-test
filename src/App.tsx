@@ -13,7 +13,7 @@ function App() {
   };
 
   const onConnectClick = () => {
-    let socket = new WebSocket("wss://socketsbay.com/wss/v2/2/demo/");
+    let socket = new WebSocket(process.env.REACT_APP_SERVER_URL);
     const byteArray = sendPacket(pktname, dummyData);
     socket.onopen = function () {
       setMessage("[open] 커넥션이 만들어졌습니다.");
