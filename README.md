@@ -1,70 +1,66 @@
-# Getting Started with Create React App
+# Websocket-test
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### 웹소켓 테스트 서버
 
-## Available Scripts
+https://www.piesocket.com/websocket-tester#
 
-In the project directory, you can run:
+## TS 프로젝트 설정
 
-### `npm start`
+### env 파일 설정
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+1. 환경변수명 앞에 항상 `REACT_APP`을 쓴다.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```
+// SERVER_URL 이라는 환경변수 설정 예시
+REACT_APP_SERVER_URL = wss:demo.websockettest.com/
+```
 
-### `npm test`
+2. `react-app-env.d.ts` 파일 생성 후 1.에서 만든 환경변수의 타입을 추가한다.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```
+declare namespace NodeJS {
+    interface ProcessEnv {
+      NODE_ENV: "development" | "production" | "test";
+      REACT_APP_SERVER_URL: string; // 생성한 환경변수 추가
+    }
+  }
+```
 
-### `npm run build`
+3. `env` 파일 설정 후 서버 재실행한다.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 서버에 Packet 보내기
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+네트워크 통신에서 Packet이란 데이터의 단위를 의미합니다.
+JSON 데이터를 binary data로 보내기
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Packet 구조
 
-### `npm run eject`
+| packet name size | data size |    packet name     |    data     |
+| :--------------: | :-------: | :----------------: | :---------: |
+|      2 byte      |  2 byte   | packet name length | data length |
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+**packetname size** <br>
+packet name의 length
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+**data size** <br>
+전송할 데이터의 length
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+-> packet header = packet name size + data size
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+**packet name** <br>
+packet name의 binary array로 변환한 값
 
-## Learn More
+**data** <br>
+전송할 데이터를 binary array로 변환한 값
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### 참고문서
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+웹소켓으로 데이터 전송하기 https://ko.javascript.info/websocket#ref-1597
 
-### Code Splitting
+Uint8Array https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Right Shift(비트 연산자) https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Right_shift
 
-### Analyzing the Bundle Size
+TextEncoder https://developer.mozilla.org/en-US/docs/Web/API/TextEncoder
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Concatenate typed arrays https://javascript.info/task/concat
